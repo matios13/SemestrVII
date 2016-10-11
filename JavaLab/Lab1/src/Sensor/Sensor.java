@@ -58,7 +58,7 @@ public class Sensor extends UnicastRemoteObject implements ISensor{
     @Override
     public void setup(int czestotliwosc, Object obj) throws RemoteException {
         odczytywanie.setCzestotliwosc(czestotliwosc);
-        if(obj!=null && obj instanceof ITablica){
+        if(obj==null || obj instanceof ITablica){
            odczytywanie.setTablica((ITablica)obj);
         }
         odczytywanie.setName(name);
@@ -108,4 +108,5 @@ public class Sensor extends UnicastRemoteObject implements ISensor{
         }
         System.exit(0);
     }
+
 }
