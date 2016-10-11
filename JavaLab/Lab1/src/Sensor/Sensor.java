@@ -1,21 +1,16 @@
 package Sensor;
 
-import Centrala.Centrala;
 import Centrala.ICentrala;
+import Commons.Commons;
 import Tablica.ITablica;
 
-import javax.sound.midi.Soundbank;
 import javax.swing.*;
-import javax.swing.border.EmptyBorder;
-import java.awt.*;
 import java.awt.event.*;
-import java.rmi.Naming;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
-import java.util.Random;
 
 /**
  * Created by pas114 on 2016-10-06.
@@ -32,8 +27,8 @@ public class Sensor extends UnicastRemoteObject implements ISensor{
     public static void main(String[] args) {
 
         try {
-            Registry registry = LocateRegistry.getRegistry(8091);
-            ICentrala centrala = (ICentrala) registry.lookup("Centrala");
+            Registry registry = LocateRegistry.getRegistry(Commons.PORT);
+            ICentrala centrala = (ICentrala) registry.lookup(Commons.CENTRALA);
             Sensor sensor = new Sensor();
             for(int i=1;i<101;i++){
                 sensor.setName("S"+i);
@@ -43,6 +38,7 @@ public class Sensor extends UnicastRemoteObject implements ISensor{
                     System.exit(-1);
             }
             createGUI(sensor);
+            sensor.odczytywanie.setName(sensor.getName());
             sensor.odczytywanie.run();
 
         } catch (RemoteException e) {
@@ -67,7 +63,7 @@ public class Sensor extends UnicastRemoteObject implements ISensor{
 
     private static void createGUI(Sensor sensor){
         JButton button;
-        button = new JButton("Turn off Sensor : "+sensor.name);
+        button = new JButton("Turn off and unregister Sensor : "+sensor.name);
         button.setVerticalTextPosition(AbstractButton.CENTER);
         button.setHorizontalTextPosition(AbstractButton.LEADING); //aka LEFT, for left-to-right locales
         button.setMnemonic(KeyEvent.VK_ESCAPE);

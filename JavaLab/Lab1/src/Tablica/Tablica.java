@@ -2,11 +2,9 @@ package Tablica;
 
 import Centrala.ICentrala;
 import Sensor.Odczyt;
-import Sensor.Sensor;
-
+import Commons.Commons;
 import javax.swing.*;
 import java.awt.*;
-import java.awt.datatransfer.StringSelection;
 import java.awt.event.*;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
@@ -16,16 +14,18 @@ import java.rmi.server.UnicastRemoteObject;
 import java.util.HashMap;
 import java.util.Map;
 
+import static Commons.Commons.turnOff;
+
 /**
  * Created by Uzytkownik on 07.10.2016.
  */
 public class Tablica extends UnicastRemoteObject implements ITablica {
     private String name;
-    private Map<String,String> odczyty;
+    private Map<String,String> readings;
     private static JTextArea textArea = new JTextArea(30,30);
 
     protected Tablica() throws RemoteException {
-        odczyty= new HashMap<>();
+        readings = new HashMap<>();
     }
 
     public static void main(String[] args) {
@@ -57,12 +57,12 @@ public class Tablica extends UnicastRemoteObject implements ITablica {
     @Override
     public void wyslij(Odczyt o, String name) throws RemoteException {
         StringBuilder wynik = new StringBuilder();
-        wynik.append("Odczyt z sensora : "+name+"\n     | ");
+        wynik.append("Odczyt z sensora : " + name+"\n     | ");
         o.m.forEach((k,v)-> wynik.append(k+" : "+v+" | "));
         wynik.append("\n");
         System.out.print(wynik.toString());
-        odczyty.put(name,wynik.toString());
-        odswierzListe();
+        readings.put(name,wynik.toString());
+        reloadList();
     }
 
     private static void createGUI(Tablica tablica) {
@@ -73,7 +73,7 @@ public class Tablica extends UnicastRemoteObject implements ITablica {
         button.setVisible(true);
         button.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                wylacz(tablica);
+                turnOff(tablica.getName());
             }
         });
         textArea.setVisible(true);
@@ -98,9 +98,14 @@ public class Tablica extends UnicastRemoteObject implements ITablica {
         f.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent windowEvent) {
-                wylacz(tablica);
+                turnOff(tablica.getName());
             }
         });
+    }
+    private void reloadList(){
+        StringBuilder wyniki = new StringBuilder();
+        readings.forEach((k, v)->wyniki.append(v+"\n"));
+        textArea.setText(wyniki.toString());
     }
 
 
@@ -111,21 +116,5 @@ public class Tablica extends UnicastRemoteObject implements ITablica {
 
     public void setName(String name) {
         this.name = name;
-    }
-    private static void wylacz(Tablica tablica){
-        try {
-            Registry registry = LocateRegistry.getRegistry(8091);
-            ((ICentrala) registry.lookup("Centrala")).wyrejestruj(tablica.getName());
-        }catch (RemoteException e){
-            System.err.println(e);
-        } catch (NotBoundException e) {
-            e.printStackTrace();
-        }
-        System.exit(0);
-    }
-    private void odswierzListe(){
-        StringBuilder wyniki = new StringBuilder();
-        odczyty.forEach((k,v)->wyniki.append(v+"\n"));
-        textArea.setText(wyniki.toString());
     }
 }

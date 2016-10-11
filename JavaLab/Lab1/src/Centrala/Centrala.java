@@ -1,5 +1,6 @@
 package Centrala;
 
+import Commons.Commons;
 import Sensor.ISensor;
 import Tablica.ITablica;
 
@@ -20,8 +21,8 @@ import java.util.Map;
  * Created by pas114 on 2016-10-06.
  */
 public class Centrala extends  UnicastRemoteObject implements ICentrala{
-    private static List<SensorStatus> sensor= new ArrayList<>();
-    private static Map<String, ITablica> tablicaList = new HashMap<>();
+    private static volatile List<SensorStatus> sensor= new ArrayList<>();
+    private static volatile Map<String, ITablica> tablicaList = new HashMap<>();
     private static JTextArea logs = new JTextArea(30,30);
     private static JTextArea status = new JTextArea(30,30);
     private static JComboBox sensorComboBox = new JComboBox();
@@ -33,9 +34,9 @@ public class Centrala extends  UnicastRemoteObject implements ICentrala{
 
     public static void main(String[] args) {
         try {
-            String name = "Centrala";
+            String name = Commons.CENTRALA;
             ICentrala centrala = new Centrala();
-             Registry registry = LocateRegistry.createRegistry(8091);
+             Registry registry = LocateRegistry.createRegistry(Commons.PORT);
             registry.rebind(name,centrala);
             System.out.println("Start");
             createGUI();
@@ -65,6 +66,8 @@ public class Centrala extends  UnicastRemoteObject implements ICentrala{
 
     @Override
     public boolean wyrejestruj(String nazwa) throws RemoteException {
+        try{
+
         if(sensor.contains(new SensorStatus(nazwa,null))){
             sensor.remove(new SensorStatus(nazwa,null));
             sensorComboBox.removeItem(nazwa);
@@ -72,17 +75,26 @@ public class Centrala extends  UnicastRemoteObject implements ICentrala{
             updateStatus();
             return true;
         }else if (tablicaList.containsKey(nazwa)){
-            tablicaList.remove(nazwa);
+            System.out.println("remove "+nazwa);
             tablicaComboBox.removeItem(nazwa);
+            for(SensorStatus s : sensor){
+
+            }
             sensor.stream().forEach(s->{
                 if(s.getTablica().equals(nazwa)){
+                    System.out.println("wypisano  "+ s.getName());
                     s.setTablica(null);
                     updateSensor(s);
-                    updateStatus();
                 }
             });
+            tablicaList.remove(nazwa);
+            updateStatus();
             loguj("Udalo sie usunac tablice: " + nazwa + " zostalo : " +tablicaList.size());
             return true;
+        }
+
+        }catch(Exception e){
+            e.printStackTrace();
         }
         return false;
     }
@@ -142,17 +154,7 @@ public class Centrala extends  UnicastRemoteObject implements ICentrala{
         save.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                if(!czestotliwosc.getText().isEmpty()){
-                    int index = sensor.indexOf(new SensorStatus((String)sensorComboBox.getSelectedItem(),null));
-                    SensorStatus sensorStatus = sensor.get(index);
-                    if(sensorStatus!=null){
-                        sensorStatus.setCzestotliwosc(new Integer(czestotliwosc.getText()));
-                        sensorStatus.setTablica((String)tablicaComboBox.getSelectedItem());
-                        updateSensor(sensorStatus);
-                        updateStatus();
-                    }else loguj("nieznaleziono sensora");
-
-                }else loguj("czestotliwosc jest pusta");
+                onClickAction();
             }
         });
         save.setVisible(true);
@@ -196,6 +198,27 @@ public class Centrala extends  UnicastRemoteObject implements ICentrala{
         f.add(splitPane);
         f.pack();
         f.setVisible(true);
+        f.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
 
+    }
+
+    private static void onClickAction(){
+        if(!czestotliwosc.getText().isEmpty()){
+            int index = sensor.indexOf(new SensorStatus((String)sensorComboBox.getSelectedItem(),null));
+            SensorStatus sensorStatus = sensor.get(index);
+            if(sensorStatus!=null){
+                try {
+                    sensorStatus.setCzestotliwosc(new Integer(czestotliwosc.getText()));
+                }catch (NumberFormatException e){
+                    loguj("Zly format czestotliwosci");
+                    return;
+                }
+                sensorStatus.setCzestotliwosc(new Integer(czestotliwosc.getText()));
+                sensorStatus.setTablica((String)tablicaComboBox.getSelectedItem());
+                updateSensor(sensorStatus);
+                updateStatus();
+            }else loguj("nieznaleziono sensora");
+
+        }else loguj("czestotliwosc jest pusta");
     }
 }
