@@ -14,6 +14,7 @@ import java.rmi.server.UnicastRemoteObject;
 import java.util.HashMap;
 import java.util.Map;
 
+import static Commons.Commons.registerObject;
 import static Commons.Commons.turnOff;
 
 /**
@@ -31,15 +32,10 @@ public class Tablica extends UnicastRemoteObject implements ITablica {
     public static void main(String[] args) {
 
         try {
-            Registry registry = LocateRegistry.getRegistry(8091);
-            ICentrala centrala = (ICentrala) registry.lookup("Centrala");
             Tablica tablica = new Tablica();
-            for(int i=1;i<101;i++){
-                tablica.setName("T"+i);
-                if(centrala.rejestruj(tablica.getName(),tablica))
-                    break;
-                if(i==100)
-                    System.exit(-1);
+            tablica.setName(registerObject("T",tablica));
+            if(tablica.getName()==null){
+                System.exit(-1);
             }
             createGUI(tablica);
 

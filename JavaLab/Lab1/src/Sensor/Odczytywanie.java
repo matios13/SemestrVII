@@ -8,7 +8,7 @@ import java.util.Random;
 /**
  * Created by Uzytkownik on 07.10.2016.
  */
-public class Odczytywanie implements Runnable {
+public class Odczytywanie implements IOdczytywanie {
     private volatile ITablica tablica;
     private volatile int czestotliwosc=1;
     private volatile boolean running = false;

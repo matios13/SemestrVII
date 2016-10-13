@@ -77,9 +77,6 @@ public class Centrala extends  UnicastRemoteObject implements ICentrala{
         }else if (tablicaList.containsKey(nazwa)){
             System.out.println("remove "+nazwa);
             tablicaComboBox.removeItem(nazwa);
-            for(SensorStatus s : sensor){
-
-            }
             sensor.stream().forEach(s->{
                 if(s.getTablica().equals(nazwa)){
                     System.out.println("wypisano  "+ s.getName());
@@ -101,7 +98,7 @@ public class Centrala extends  UnicastRemoteObject implements ICentrala{
 
     private static void loguj(String message){
         System.out.println(message);
-        logs.append(message+"\n");
+        logs.setText(message+"\n"+logs.getText());
     }
 
     private static void updateStatus(){

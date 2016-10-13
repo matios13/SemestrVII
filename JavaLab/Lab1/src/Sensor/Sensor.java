@@ -1,7 +1,7 @@
 package Sensor;
 
 import Centrala.ICentrala;
-import Commons.Commons;
+import static Commons.Commons.*;
 import Tablica.ITablica;
 
 import javax.swing.*;
@@ -17,7 +17,7 @@ import java.rmi.server.UnicastRemoteObject;
  */
 public class Sensor extends UnicastRemoteObject implements ISensor{
     private String name;
-    private Odczytywanie odczytywanie;
+    private IOdczytywanie odczytywanie;
 
     protected Sensor() throws RemoteException {
         super();
@@ -27,16 +27,10 @@ public class Sensor extends UnicastRemoteObject implements ISensor{
     public static void main(String[] args) {
 
         try {
-            Registry registry = LocateRegistry.getRegistry(Commons.PORT);
-            ICentrala centrala = (ICentrala) registry.lookup(Commons.CENTRALA);
             Sensor sensor = new Sensor();
-            for(int i=1;i<101;i++){
-                sensor.setName("S"+i);
-                if(centrala.rejestruj(sensor.getName(),sensor))
-                    break;
-                if(i==100)
-                    System.exit(-1);
-            }
+            sensor.setName(registerObject("S",sensor));
+            if(null==sensor.getName())
+                System.exit(-1);
             createGUI(sensor);
             sensor.odczytywanie.setName(sensor.getName());
             sensor.odczytywanie.run();

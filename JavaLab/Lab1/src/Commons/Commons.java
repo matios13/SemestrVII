@@ -1,6 +1,7 @@
 package Commons;
 
 import Centrala.ICentrala;
+import Sensor.Sensor;
 
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
@@ -15,19 +16,28 @@ public class Commons {
     public static Integer PORT=8091;
     public static void turnOff(String name) {
         boolean returnStatus = false;
-        while (!returnStatus) {
-            try {
+        try {
+            while (!returnStatus) {
                 Registry registry = LocateRegistry.getRegistry(PORT);
-                returnStatus=((ICentrala) registry.lookup(CENTRALA)).wyrejestruj(name);
-                if(returnStatus)
-                    continue;
-            } catch (RemoteException e) {
-                System.err.println(e);
-            } catch (NotBoundException e) {
-                e.printStackTrace();
+                returnStatus = ((ICentrala) registry.lookup(CENTRALA)).wyrejestruj(name);
             }
-            System.exit(0);
-            }
+        } catch (RemoteException e) {
+            System.err.println(e);
+        } catch (NotBoundException e) {
+            e.printStackTrace();
+        }
+        System.exit(0);
 
+    }
+    public static String registerObject(String name,Object obj) throws RemoteException, NotBoundException {
+        String registeredName = null;
+        Registry registry = LocateRegistry.getRegistry(Commons.PORT);
+        ICentrala centrala = (ICentrala) registry.lookup(Commons.CENTRALA);
+        for(int i=1;i<100;i++){
+            registeredName=name+i;
+            if(centrala.rejestruj(registeredName,obj))
+                return registeredName;
+        }
+        return null;
     }
 }
