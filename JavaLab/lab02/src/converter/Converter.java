@@ -32,6 +32,7 @@ public class Converter extends JPanel {
 		setLayout(new BorderLayout());
 		prepareTopPanel();
 		prepareBottomPanel();
+		chosenShape= Shape.walec;
 		add(topPanel, BorderLayout.NORTH);
 		add(bottomPanel, BorderLayout.CENTER);
 	}
@@ -44,7 +45,7 @@ public class Converter extends JPanel {
 
 	private void prepareBottomPanel() {
 		bottomPanel.setLayout(new FlowLayout());
-		shapeLabel=new JLabel("stozek");
+		shapeLabel=new JLabel("walec");
 		wynik=new JLabel("0");
 		button = new JButton("calculate");
 		button.addActionListener(e -> calculate());
@@ -87,7 +88,8 @@ public class Converter extends JPanel {
 	}
 
 	public void setShape(Shape chosenShape) {
-		shapeLabel.setText(chosenShape.toString());
+		shape=chosenShape.toString();
+		this.shapeLabel.setText("DUPA");
 		this.chosenShape = chosenShape;	
 	}
 

@@ -2,6 +2,8 @@ package converter;
 
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.beans.Customizer;
 import java.beans.PropertyEditor;
 import java.beans.PropertyEditorManager;
@@ -59,7 +61,14 @@ public class ConverterBeanCustomizer extends JPanel implements Customizer {
 		JComboBox<Shape> jComboBox = new JComboBox<Converter.Shape>();
 		Arrays.stream(Shape.values()).forEach(shape -> jComboBox.addItem(shape));
 		
-		jComboBox.addActionListener(evt -> setShape((Shape)jComboBox.getSelectedItem()));
+		jComboBox.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				setShape((Shape)jComboBox.getSelectedItem());
+				
+			}
+		});
 		panel_3.add(jComboBox);
 		
 		

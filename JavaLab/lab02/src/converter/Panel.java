@@ -25,10 +25,9 @@ public class Panel extends JPanel {
 	 */
 	public Panel() {
 		setLayout(new FlowLayout(FlowLayout.CENTER, 5, 5));
+		
 		Converter converter = new Converter();
-		converter.setBgcolor(Color.GRAY);
-		converter.setTitle("22");
-		converter.setShape(Shape.walec);
+		converter.setShape(Shape.szescian);
 		add(converter);
 	}
 	public static void main(String args[]){
