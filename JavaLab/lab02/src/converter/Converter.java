@@ -5,6 +5,7 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 
+import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -17,11 +18,11 @@ public class Converter extends JPanel {
 	private String title;
 	private JLabel titleLabel;
 	private Shape chosenShape;
-	private String shape;
 	private JLabel shapeLabel;
 	private JLabel wynik;
 	private JButton button;
 	private Color bgcolor;
+	private boolean vertical;
 	
 	private JPanel topPanel = new JPanel();
 	private JPanel bottomPanel = new JPanel();
@@ -44,7 +45,10 @@ public class Converter extends JPanel {
 	}
 
 	private void prepareBottomPanel() {
-		bottomPanel.setLayout(new FlowLayout());
+		if(vertical)
+			bottomPanel.setLayout(new BoxLayout(bottomPanel, BoxLayout.Y_AXIS));
+		else
+			bottomPanel.setLayout(new BoxLayout(bottomPanel, BoxLayout.X_AXIS));
 		shapeLabel=new JLabel("walec");
 		wynik=new JLabel("0");
 		button = new JButton("calculate");
@@ -86,11 +90,20 @@ public class Converter extends JPanel {
 	public Shape getShape() {
 		return chosenShape;
 	}
-
 	public void setShape(Shape chosenShape) {
-		shape=chosenShape.toString();
-		this.shapeLabel.setText("DUPA");
+		this.shapeLabel.setText(chosenShape.toString());
 		this.chosenShape = chosenShape;	
+	}
+	public boolean isVertical(){
+		return vertical;
+	}
+	
+	public void setVertical(boolean vertical){
+		this.vertical=vertical;
+		if(vertical)
+			bottomPanel.setLayout(new BoxLayout(bottomPanel, BoxLayout.Y_AXIS));
+		else
+			bottomPanel.setLayout(new BoxLayout(bottomPanel, BoxLayout.X_AXIS));
 	}
 
 	private void calculate(){

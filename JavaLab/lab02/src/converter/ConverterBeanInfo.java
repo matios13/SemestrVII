@@ -20,7 +20,7 @@ public class ConverterBeanInfo extends SimpleBeanInfo {
 			titleDescriptor.setPropertyEditorClass(TitleEditor.class);
 			shapeDescriptor = new PropertyDescriptor("shape", Converter.class);
 			shapeDescriptor.setPropertyEditorClass(ShapeEditor.class);
-			return new PropertyDescriptor[] {titleDescriptor};
+			return new PropertyDescriptor[] {shapeDescriptor};
 		} catch (IntrospectionException e) {
 			e.printStackTrace();
 			return null;
