@@ -1,9 +1,4 @@
-import java.io.BufferedInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
+import java.io.*;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -45,6 +40,28 @@ public class MyClassLoader extends ClassLoader {
         return c;
     }
 
+    protected Class<?> findClassFromFile(String name, File file) throws ClassNotFoundException {
+
+        if (classes.containsKey(name)) {
+            return classes.get(name);
+        }
+
+        byte[] classData;
+
+        try {
+            classData = loadClassData(name);
+        } catch (IOException e) {
+            throw new ClassNotFoundException("Class [" + name
+                    + "] could not be found", e);
+        }
+
+        Class<?> c = defineClass(name, classData, 0, classData.length);
+        resolveClass(c);
+        classes.put(name, c);
+
+        return c;
+    }
+
     /**
      * Load the class file into byte array
      *
@@ -58,6 +75,16 @@ public class MyClassLoader extends ClassLoader {
                 ClassLoader.getSystemResourceAsStream(name.replace(".", "/")
                         + ".class"));
         ByteArrayOutputStream out = new ByteArrayOutputStream();
+        return getBytes(in, out);
+    }
+    private byte[] loadClassDataFromFile(File file) throws IOException {
+
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        return getBytes(new FileInputStream(file), out);
+    }
+
+
+    private byte[] getBytes(InputStream in, ByteArrayOutputStream out) throws IOException {
         int i;
 
         while ((i = in.read()) != -1) {
@@ -71,5 +98,8 @@ public class MyClassLoader extends ClassLoader {
         return classData;
     }
 
+    public void unload(Class classToUload) {
+        classes.remove(classToUload.getName());
+    }
 }
 

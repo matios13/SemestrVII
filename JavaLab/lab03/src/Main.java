@@ -26,9 +26,10 @@ public class Main {
             NoSuchMethodException, SecurityException, IllegalArgumentException,
             InvocationTargetException
     {
-        Panel panel = new Panel();
+
 
         MyClassLoader loader = new MyClassLoader();
+        Panel panel = new Panel(loader);
         // This class should be in your application class path
         Class<?> c = loader.findClass("Test");
         panel.getClassChoser().addItem(c);

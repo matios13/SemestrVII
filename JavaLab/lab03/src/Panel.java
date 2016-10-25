@@ -21,6 +21,7 @@ import static javafx.scene.input.KeyCode.T;
  */
 public class Panel extends JPanel {
     private JPanel topPanel ;
+    private JPanel filePanel;
     private JPanel bottomPanel = new JPanel();
     private JComboBox<Class> classChoser;
     private JComboBox<Method> methodChoser;
@@ -28,18 +29,44 @@ public class Panel extends JPanel {
     private Object returnValue;
     private Object selectedClass;
     private Parameter[] parameters;
+    MyClassLoader loader;
 
-    public Panel() {
+    public Panel(MyClassLoader loader) {
         setLayout(new BoxLayout(this,BoxLayout.Y_AXIS));
+        createFilePanel();
         createTopPanel();
         createBottomPanel();
+        add(filePanel);
         add(topPanel);
         add(bottomPanel);
+        this.loader=loader;
 
     }
 
+    private void createFilePanel(){
+
+        filePanel = new JPanel();
+        JFileChooser fileChooser = new JFileChooser();
+        JButton button = new JButton("LOAD");
+        fileChooser.setDialogTitle("choosertitle");
+        button.addActionListener(a-> {
+            File file =fileChooser.getSelectedFile();
+            load(file);
+        });
+        filePanel.setLayout(new FlowLayout());
+        filePanel.add(fileChooser);
+        filePanel.add(button);
+    }
+
     private void createTopPanel(){
+        JButton unload = new JButton("UNLOAD");
+        unload.addActionListener(a -> {
+            if(classChoser.getSelectedItem()!=null){
+                unload((Class)classChoser.getSelectedItem());
+            }
+        });
         topPanel = new JPanel();
+        topPanel.add(unload);
         classChoser = new JComboBox();
         classChoser.addActionListener(a -> updateMethodsForClass((Class) classChoser.getSelectedItem()));
         methodChoser = new JComboBox();
@@ -55,6 +82,7 @@ public class Panel extends JPanel {
     }
 
     private void createBottomPanel(){
+
         bottomPanel = new JPanel();
         values.stream().forEach(v->bottomPanel.add(v));
         JButton invokeButton = new JButton("INVOKE");
@@ -98,7 +126,6 @@ public class Panel extends JPanel {
 
                 return m.invoke(selectedClass,createListOFParameters( values.stream().map(JTextField::getText).collect(Collectors.toList())));
             }
-
         } catch (IllegalAccessException e) {
             e.printStackTrace();
         } catch (InvocationTargetException e) {
@@ -128,6 +155,10 @@ public class Panel extends JPanel {
         updateBottomPanel(fields);
     }
     public void updateMethodsForClass(Class c){
+        if(c==null) {
+            methodChoser.removeAllItems();
+            return;
+        }
         try {
             selectedClass=c.newInstance();
         } catch (InstantiationException e) {
@@ -153,5 +184,20 @@ public class Panel extends JPanel {
         if( name.equals("float") ) return Float.parseFloat( value );
         if( name.equals("double") ) return Double.parseDouble( value );
         return null;
+    }
+    private void unload(Class classToUload){
+        classChoser.removeItem(classToUload);
+        loader.unload(classToUload);
+    }
+    private void load(File file){
+        try {
+            Class c =loader.findClass(file.getCanonicalPath());
+            classChoser.addItem(c);
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
     }
 }
