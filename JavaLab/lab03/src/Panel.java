@@ -10,6 +10,8 @@ import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.stream.Collectors;
@@ -22,6 +24,7 @@ import static javafx.scene.input.KeyCode.T;
 public class Panel extends JPanel {
     private JPanel topPanel ;
     private JPanel filePanel;
+    private JPanel loadPanel;
     private JPanel bottomPanel = new JPanel();
     private JComboBox<Class> classChoser;
     private JComboBox<Method> methodChoser;
@@ -34,9 +37,9 @@ public class Panel extends JPanel {
     public Panel(MyClassLoader loader) {
         setLayout(new BoxLayout(this,BoxLayout.Y_AXIS));
         createFilePanel();
+        createLoadPanel();
         createTopPanel();
         createBottomPanel();
-        add(filePanel);
         add(topPanel);
         add(bottomPanel);
         this.loader=loader;
@@ -47,15 +50,24 @@ public class Panel extends JPanel {
 
         filePanel = new JPanel();
         JFileChooser fileChooser = new JFileChooser();
-        JButton button = new JButton("LOAD");
-        fileChooser.setDialogTitle("choosertitle");
-        button.addActionListener(a-> {
+        fileChooser.addActionListener(a-> {
             File file =fileChooser.getSelectedFile();
             load(file);
         });
         filePanel.setLayout(new FlowLayout());
         filePanel.add(fileChooser);
-        filePanel.add(button);
+        add(filePanel);
+    }
+
+    private void createLoadPanel(){
+        loadPanel = new JPanel();
+        JTextField classField = new JTextField();
+        classField.setPreferredSize(new Dimension(300,30));
+        JButton button = new JButton("LOAD");
+        button.addActionListener(a-> load(classField.getText()));
+        loadPanel.add(classField);
+        loadPanel.add(button);
+        add(loadPanel);
     }
 
     private void createTopPanel(){
@@ -191,12 +203,57 @@ public class Panel extends JPanel {
     }
     private void load(File file){
         try {
-            Class c =loader.findClass(file.getCanonicalPath());
+            Class c =loader.findClassFromFile(generateFileName(file),generateURL(file));
             classChoser.addItem(c);
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
-        } catch (IOException e) {
+        }
+
+    }
+    private void load(String name){
+        try {
+            Class c =loader.findClass(name);
+            classChoser.addItem(c);
+        } catch (ClassNotFoundException e) {
             e.printStackTrace();
+        }
+
+    }
+
+    private String generateFileName(File file){
+        String name = "";
+        String[] path = file.getAbsolutePath().split("\\\\");
+        ArrayList<String> packages = new ArrayList<String>();
+        for (int i = path.length - 1; i >= 0; i--) {
+            if(path[i].equals("bin"))
+                break;
+            String[] temp = path[i].split("\\.");
+            if(temp.length>0)
+                packages.add(temp[0]);
+            else
+                packages.add(path[i]);
+        }
+        for (int i = packages.size() - 1; i >= 0; i--) {
+            name +=packages.get(i);
+            if(i>0)
+                name+=".";
+        }
+        System.out.println(name);
+        return name;
+    }
+    private URL generateURL(File file){
+        String name = "";
+        String[] path = file.getAbsolutePath().split("\\\\");
+        for (int i = 0; i < path.length; i++) {
+
+            name+=path[i]+"\\";
+            if(path[i].equals("bin"))
+                break;
+        }
+        try {
+            return new File(name).toURL();
+        } catch (MalformedURLException e) {
+            return null;
         }
 
     }

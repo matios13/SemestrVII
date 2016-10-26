@@ -1,4 +1,7 @@
 import java.io.*;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -11,6 +14,7 @@ public class MyClassLoader extends ClassLoader {
      * The HashMap where the classes will be cached
      */
     private Map<String, Class<?>> classes = new HashMap<String, Class<?>>();
+
 
     @Override
     public String toString() {
@@ -40,26 +44,25 @@ public class MyClassLoader extends ClassLoader {
         return c;
     }
 
-    protected Class<?> findClassFromFile(String name, File file) throws ClassNotFoundException {
+    protected Class<?> findClassFromFile(String name,URL url) throws ClassNotFoundException {
 
         if (classes.containsKey(name)) {
             return classes.get(name);
         }
 
-        byte[] classData;
-
         try {
-            classData = loadClassData(name);
-        } catch (IOException e) {
+            URL[] urls = new URL[]{url};
+            ClassLoader cl = new URLClassLoader(urls);
+            System.out.println("URL : "+url.toString()+" Name : "+name);
+            Class cls = cl.loadClass(name);
+
+        return cls;
+        } catch (Exception e) {
+            e.printStackTrace();
             throw new ClassNotFoundException("Class [" + name
                     + "] could not be found", e);
+
         }
-
-        Class<?> c = defineClass(name, classData, 0, classData.length);
-        resolveClass(c);
-        classes.put(name, c);
-
-        return c;
     }
 
     /**

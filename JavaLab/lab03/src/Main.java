@@ -31,7 +31,7 @@ public class Main {
         MyClassLoader loader = new MyClassLoader();
         Panel panel = new Panel(loader);
         // This class should be in your application class path
-        Class<?> c = loader.findClass("Test");
+        Class<?> c = loader.findClass("test.Test");
         panel.getClassChoser().addItem(c);
         System.out.println(c.getMethods());
         Class<?> c2 = loader.findClass("Test2");
