@@ -75,7 +75,6 @@ public class MyPanel extends JPanel {
     }
     private void updateBottomPanel(List<FieldPanel> fields){
         this.fields=fields;
-        System.out.println("THIS FIELDS : "+this.fields.size()+" fields : "+fields.size());
         bottomPanel.removeAll();
         fields.stream().forEach(f->bottomPanel.add(f));
         JButton invokeButton = new JButton("SAVE");
@@ -99,9 +98,7 @@ public class MyPanel extends JPanel {
         })){
             System.out.println(selectedClass.toString());
             serializeObject(selectedClass);
-            updatePropertiesForClass((Class) classChoser.getSelectedItem());
-
-        }
+            updatePropertiesForClass((Class) classChoser.getSelectedItem());}
 
     }
 
@@ -116,17 +113,13 @@ public class MyPanel extends JPanel {
             e.printStackTrace();
         }
         Field[] fieldsTable= c.getFields();
-        System.out.println("JEST" +fieldsTable.length);
-
         List<Field> annotatedFields = Arrays.stream(fieldsTable).
                 filter(f->f.isAnnotationPresent(Form.class)).collect(Collectors.toList());
-        System.out.println("JEST" +annotatedFields.size());
         List<FieldPanel> fields = annotatedFields.stream().map(f->{
             Form form = f.getAnnotation(Form.class);
             FieldPanel fieldPanel = new FieldPanel(form.min(),form.max(),form.defaultValue(),form.name(),f);
             return fieldPanel;
         }).collect(Collectors.toList());
-        System.out.println("JEST" +fields.size());
         updateBottomPanel(fields);
 
     }
@@ -139,6 +132,7 @@ public class MyPanel extends JPanel {
             Class c =loader.findClass(name);
             classChoser.addItem(c);
         } catch (ClassNotFoundException e) {
+            JOptionPane.showMessageDialog(null, e.getMessage(), "Class not found", JOptionPane.ERROR_MESSAGE);
             e.printStackTrace();
         }
 
@@ -155,9 +149,10 @@ public class MyPanel extends JPanel {
             out.writeObject(object);
             out.close();
             fileOut.close();
-            System.out.printf("Serialized data is saved in "+filename);
-        }catch(IOException i) {
-            i.printStackTrace();
+            JOptionPane.showMessageDialog(null, "Serialized data is saved in "+filename, "Success",JOptionPane.INFORMATION_MESSAGE);
+        }catch(IOException e) {
+            JOptionPane.showMessageDialog(null, e.getMessage(), "Cannot serialize", JOptionPane.ERROR_MESSAGE);
+            e.printStackTrace();
         }
     }
 

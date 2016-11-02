@@ -32,4 +32,10 @@ public class Test2 implements Serializable {
 
     @Form(min = -50, max = 0, name = "test8", defaultValue = "2.5d")
     public double test8;
+
+    @Override
+    public String toString() {
+        return "test : " + test + " test2 : " + test2 + " test3 : " + test3 + "test4 : " + test4 + " test5 : " +
+                test5 + " test6 : " + test6  + " test7 : " + test7  + " test8 : " + test8  ;
+    }
 }
