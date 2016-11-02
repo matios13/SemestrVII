@@ -4,12 +4,10 @@ import addnotations.Form;
 
 import javax.swing.*;
 import java.awt.*;
-import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -18,18 +16,17 @@ import java.util.stream.Collectors;
 /**
  * Created by pas114 on 2016-10-20.
  */
-public class MzPanel extends JPanel {
+public class MyPanel extends JPanel {
     private JPanel topPanel ;
     private JPanel loadPanel;
     private JPanel bottomPanel = new JPanel();
     private JComboBox<Class> classChoser;
-    private JComboBox<Method> methodChoser;
     private ArrayList<JTextField> values = new ArrayList<>();
     private Object selectedClass;
     List<FieldPanel> fields;
     MyClassLoader loader;
 
-    public MzPanel(MyClassLoader loader) {
+    public MyPanel(MyClassLoader loader) {
         setLayout(new BoxLayout(this,BoxLayout.Y_AXIS));
         createLoadPanel();
         createTopPanel();
@@ -108,9 +105,7 @@ public class MzPanel extends JPanel {
 
     }
 
-    public JComboBox<Class> getClassChoser() {
-        return classChoser;
-    }
+
 
     public void updatePropertiesForClass(Class c){
         try {
@@ -135,17 +130,6 @@ public class MzPanel extends JPanel {
         updateBottomPanel(fields);
 
     }
-    private Object setValue(String value,String name) {
-        if (name.equals("String")) return value;
-        if(name.equals("boolean") ) return Boolean.parseBoolean( value );
-        if( name.equals("byte") ) return Byte.parseByte( value );
-        if(name.equals("short") ) return Short.parseShort( value );
-        if( name.equals("int") ) return Integer.parseInt( value );
-        if( name.equals("long") ) return Long.parseLong( value );
-        if( name.equals("float") ) return Float.parseFloat( value );
-        if( name.equals("double") ) return Double.parseDouble( value );
-        return null;
-    }
     private void unload(Class classToUload){
         classChoser.removeItem(classToUload);
         loader.unload(classToUload);
@@ -166,7 +150,6 @@ public class MzPanel extends JPanel {
                     "Name of the file to serialize that object ?", null)+".ser";
             if(filename==null)
                 return;
-//
             FileOutputStream fileOut = new FileOutputStream(filename);
             ObjectOutputStream out = new ObjectOutputStream(fileOut);
             out.writeObject(object);

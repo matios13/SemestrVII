@@ -45,7 +45,7 @@ public class MyClassLoader extends ClassLoader {
         return c;
     }
 
-    protected Class<?> findClassFromFile(String name,URL url) throws ClassNotFoundException {
+    protected Class<?> findClassFromFile(String name, URL url) throws ClassNotFoundException {
 
         if (classes.containsKey(name)) {
             return classes.get(name);
@@ -54,10 +54,10 @@ public class MyClassLoader extends ClassLoader {
         try {
             URL[] urls = new URL[]{url};
             ClassLoader cl = new URLClassLoader(urls);
-            System.out.println("URL : "+url.toString()+" Name : "+name);
+            System.out.println("URL : " + url.toString() + " Name : " + name);
             Class cls = cl.loadClass(name);
 
-        return cls;
+            return cls;
         } catch (Exception e) {
             e.printStackTrace();
             throw new ClassNotFoundException("Class [" + name
@@ -69,8 +69,7 @@ public class MyClassLoader extends ClassLoader {
     /**
      * Load the class file into byte array
      *
-     * @param name
-     *            The name of the class e.g. com.codeslices.test.TestClass}
+     * @param name The name of the class e.g. com.codeslices.test.TestClass}
      * @return The class file as byte array
      * @throws IOException
      */
@@ -81,6 +80,7 @@ public class MyClassLoader extends ClassLoader {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         return getBytes(in, out);
     }
+
     private byte[] loadClassDataFromFile(File file) throws IOException {
 
         ByteArrayOutputStream out = new ByteArrayOutputStream();
