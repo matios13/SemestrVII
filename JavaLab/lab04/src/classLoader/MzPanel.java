@@ -4,9 +4,12 @@ import addnotations.Form;
 
 import javax.swing.*;
 import java.awt.*;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.lang.reflect.Parameter;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -22,10 +25,8 @@ public class MzPanel extends JPanel {
     private JComboBox<Class> classChoser;
     private JComboBox<Method> methodChoser;
     private ArrayList<JTextField> values = new ArrayList<>();
-    private Object returnValue;
     private Object selectedClass;
     List<FieldPanel> fields;
-    private Parameter[] parameters;
     MyClassLoader loader;
 
     public MzPanel(MyClassLoader loader) {
@@ -80,6 +81,9 @@ public class MzPanel extends JPanel {
         System.out.println("THIS FIELDS : "+this.fields.size()+" fields : "+fields.size());
         bottomPanel.removeAll();
         fields.stream().forEach(f->bottomPanel.add(f));
+        JButton invokeButton = new JButton("SAVE");
+        invokeButton.addActionListener(a -> saveObject());
+        bottomPanel.add(invokeButton);
         bottomPanel.updateUI();
 
     }
@@ -97,7 +101,9 @@ public class MzPanel extends JPanel {
             return true;
         })){
             System.out.println(selectedClass.toString());
-            JOptionPane.showMessageDialog(null, "UDALO SIE");
+            serializeObject(selectedClass);
+            updatePropertiesForClass((Class) classChoser.getSelectedItem());
+
         }
 
     }
@@ -106,17 +112,6 @@ public class MzPanel extends JPanel {
         return classChoser;
     }
 
-    public void setClassChoser(JComboBox<Class> classChoser) {
-        this.classChoser = classChoser;
-    }
-
-    public JComboBox<Method> getMethodChoser() {
-        return methodChoser;
-    }
-
-    public void setMethodChoser(JComboBox<Method> methodChoser) {
-        this.methodChoser = methodChoser;
-    }
     public void updatePropertiesForClass(Class c){
         try {
             selectedClass = c.newInstance();
@@ -163,6 +158,24 @@ public class MzPanel extends JPanel {
             e.printStackTrace();
         }
 
+    }
+
+    private void serializeObject(Object object){
+        try {
+            String filename = JOptionPane.showInputDialog(this,
+                    "Name of the file to serialize that object ?", null)+".ser";
+            if(filename==null)
+                return;
+//
+            FileOutputStream fileOut = new FileOutputStream(filename);
+            ObjectOutputStream out = new ObjectOutputStream(fileOut);
+            out.writeObject(object);
+            out.close();
+            fileOut.close();
+            System.out.printf("Serialized data is saved in "+filename);
+        }catch(IOException i) {
+            i.printStackTrace();
+        }
     }
 
 }

@@ -33,7 +33,7 @@ public class FieldPanel extends JPanel {
     }
     public Object setValueAndValidate(Object object) throws IllegalAccessException {
         String type = field.getGenericType().toString(); 
-        Number number = null;
+        Number number = new Integer(0);
         try {
             String value = textField.getText();
             if (value.isEmpty() && !defaultValue.isEmpty()) {
@@ -66,7 +66,7 @@ public class FieldPanel extends JPanel {
             } else {
                 if (type.contains("String")) {
                     if (value.length() < min || value.length() > max) {
-                        JOptionPane.showMessageDialog(null, "Value " + this.name + " need to be between : " + min + " and " + max);
+                        JOptionPane.showMessageDialog(null, "Value " + this.name + " need to be between : " + min + " and " + max,"Validator Error",JOptionPane.ERROR_MESSAGE);
                         return null;
                     }
                     field.set(object,value);
@@ -78,7 +78,7 @@ public class FieldPanel extends JPanel {
                         field.set(object,Boolean.parseBoolean(value));
                         return Boolean.parseBoolean(value);
                     } else {
-                        JOptionPane.showMessageDialog(null, "value " + this.name + " can NOT be empty");
+                        JOptionPane.showMessageDialog(null, "value " + this.name + " can NOT be empty","Validator Error",JOptionPane.ERROR_MESSAGE);
                     }
                 }
                 if (type.equals("byte")) number = Byte.parseByte(value);
@@ -88,7 +88,7 @@ public class FieldPanel extends JPanel {
                 if (type.equals("float")) number = Float.parseFloat(value);
                 if (type.equals("double")) number = Double.parseDouble(value);
                 if (number.intValue() > max || number.intValue() < min) {
-                    JOptionPane.showMessageDialog(null, "Value " + this.name + " need to be between : " + min + " and " + max);
+                    JOptionPane.showMessageDialog(null, "Value " + this.name + " need to be between : " + min + " and " + max,"Validator Error",JOptionPane.ERROR_MESSAGE);
                     return null;
                 }
                 
@@ -96,7 +96,7 @@ public class FieldPanel extends JPanel {
             field.set(object, number);
             return number;
         }catch (Exception e){
-            JOptionPane.showMessageDialog(null, "Value " + this.name + " need to be "+type);
+            JOptionPane.showMessageDialog(null, "Value " + this.name + " need to be "+type,"Validator Error",JOptionPane.ERROR_MESSAGE);
             return null;
         }
     }

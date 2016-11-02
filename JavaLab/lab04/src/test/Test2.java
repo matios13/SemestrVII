@@ -2,10 +2,12 @@ package test;
 
 import addnotations.Form;
 
+import java.io.Serializable;
+
 /**
  * Created by pas113 on 2016-10-27.
  */
-public class Test2 {
+public class Test2 implements Serializable {
 
     @Form(min=1,max = 2,name = "test1" ,defaultValue = "1")
     public int test;
