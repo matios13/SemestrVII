@@ -12,4 +12,9 @@ public class Test {
     public int test2;
     @Form(min=-4,max = 573,name = "test3" ,defaultValue = "1")
     public int test3;
+
+    @Override
+    public String toString(){
+        return "test : "+test+" test2 : "+test2+" test3 : "+test3;
+    }
 }

@@ -28,44 +28,76 @@ public class FieldPanel extends JPanel {
         this.field = field;
 
         textField = new JTextField(20);
-        textField.setBorder(BorderFactory.createTitledBorder(name));
-        textField.addActionListener(a-> System.out.println("TEST"));
+        textField.setBorder(BorderFactory.createTitledBorder(field.getGenericType().toString()+" "+name));
         add(textField);
     }
-    public Object setValueAndvalidate(){
-        String name = field.getGenericType().toString();
-        System.out.println(name);
-        String value = textField.getText();
-        if(value.isEmpty()&&!defaultValue.isEmpty()) {
-            if (name.equals("boolean")) return Boolean.parseBoolean(value);
-            if (name.equals("byte")) return Byte.parseByte(value);
-            if (name.equals("short")) return Short.parseShort(value);
-            if (name.equals("int")) return Integer.parseInt(value);
-            if (name.equals("long")) return Long.parseLong(value);
-            if (name.equals("float")) return Float.parseFloat(value);
-            if (name.equals("double")) return Double.parseDouble(value);
-            return value;
-        }else{
-            Number number=null;
-            if (name.equals("boolean")){
-                if(!value.isEmpty()) {
-                    return Boolean.parseBoolean(value);
+    public Object setValueAndValidate(Object object) throws IllegalAccessException {
+        String type = field.getGenericType().toString(); 
+        Number number = null;
+        try {
+            String value = textField.getText();
+            if (value.isEmpty() && !defaultValue.isEmpty()) {
+                if (type.equals("boolean")) {
+                    field.set(object,Boolean.parseBoolean(defaultValue));
+                    return Boolean.parseBoolean(defaultValue);
                 }
-                else{
-                    System.err.println("Cant be empty");
+                if (type.equals("byte")) {
+                    number = Byte.parseByte(defaultValue);
                 }
+                if (type.equals("short")) {
+                    number = Short.parseShort(defaultValue);
+                }
+                if (type.equals("int")) {
+                    number = Integer.parseInt(defaultValue);
+                }
+                if (type.equals("long")) {
+                    number = Long.parseLong(defaultValue);
+                }
+                if (type.equals("float")) {
+                    number = Float.parseFloat(defaultValue);
+                }
+                if (type.equals("double")) {
+                    number = Double.parseDouble(defaultValue);
+                }
+                if (type.contains("String")) {
+                    field.set(object,defaultValue);
+                    return defaultValue;
+                }
+            } else {
+                if (type.contains("String")) {
+                    if (value.length() < min || value.length() > max) {
+                        JOptionPane.showMessageDialog(null, "Value " + this.name + " need to be between : " + min + " and " + max);
+                        return null;
+                    }
+                    field.set(object,value);
+                    return value;
+                }
+             
+                if (type.equals("boolean")) {
+                    if (!value.isEmpty()) {
+                        field.set(object,Boolean.parseBoolean(value));
+                        return Boolean.parseBoolean(value);
+                    } else {
+                        JOptionPane.showMessageDialog(null, "value " + this.name + " can NOT be empty");
+                    }
+                }
+                if (type.equals("byte")) number = Byte.parseByte(value);
+                if (type.equals("short")) number = Short.parseShort(value);
+                if (type.equals("int")) number = Integer.parseInt(value);
+                if (type.equals("long")) number = Long.parseLong(value);
+                if (type.equals("float")) number = Float.parseFloat(value);
+                if (type.equals("double")) number = Double.parseDouble(value);
+                if (number.intValue() > max || number.intValue() < min) {
+                    JOptionPane.showMessageDialog(null, "Value " + this.name + " need to be between : " + min + " and " + max);
+                    return null;
+                }
+                
             }
-            if (name.equals("byte")) number = Byte.parseByte(value);
-            if (name.equals("short")) number = Short.parseShort(value);
-            if (name.equals("int")) number = Integer.parseInt(value);
-            if (name.equals("long")) number = Long.parseLong(value);
-            if (name.equals("float")) number = Float.parseFloat(value);
-            if (name.equals("double")) number = Double.parseDouble(value);
-            if(number.intValue()>max||number.intValue()<min){
-                System.err.println("Value need to be between : "+ min+" and "+max);
-                return null;
-            }
+            field.set(object, number);
             return number;
+        }catch (Exception e){
+            JOptionPane.showMessageDialog(null, "Value " + this.name + " need to be "+type);
+            return null;
         }
     }
 

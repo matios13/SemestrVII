@@ -4,14 +4,9 @@ import addnotations.Form;
 
 import javax.swing.*;
 import java.awt.*;
-import java.io.File;
-import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -73,20 +68,38 @@ public class MzPanel extends JPanel {
     private void createBottomPanel(){
 
         bottomPanel = new JPanel();
+        bottomPanel.setLayout(new BoxLayout(bottomPanel,BoxLayout.Y_AXIS));
         values.stream().forEach(v->bottomPanel.add(v));
         JButton invokeButton = new JButton("SAVE");
         invokeButton.addActionListener(a -> saveObject());
         bottomPanel.add(invokeButton);
-        bottomPanel.setLayout(new FlowLayout());
 
     }
     private void updateBottomPanel(List<FieldPanel> fields){
         this.fields=fields;
+        System.out.println("THIS FIELDS : "+this.fields.size()+" fields : "+fields.size());
+        bottomPanel.removeAll();
         fields.stream().forEach(f->bottomPanel.add(f));
+        bottomPanel.updateUI();
 
     }
     private void saveObject(){
-        fields.stream().forEach(f-> System.out.println(f.setValueAndvalidate()));
+
+        if(fields.stream().allMatch(f -> {
+            try {
+                if(f.setValueAndValidate(selectedClass)==null) {
+                    return false;
+                }
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+                return false;
+            }
+            return true;
+        })){
+            System.out.println(selectedClass.toString());
+            JOptionPane.showMessageDialog(null, "UDALO SIE");
+        }
+
     }
 
     public JComboBox<Class> getClassChoser() {
@@ -104,31 +117,14 @@ public class MzPanel extends JPanel {
     public void setMethodChoser(JComboBox<Method> methodChoser) {
         this.methodChoser = methodChoser;
     }
-
-    public Object invokeMethod(Method m) {
+    public void updatePropertiesForClass(Class c){
         try {
-            if(values.isEmpty()){
-                return m.invoke(selectedClass);
-            }else{
-
-                return m.invoke(selectedClass,createListOFParameters( values.stream().map(JTextField::getText).collect(Collectors.toList())));
-            }
+            selectedClass = c.newInstance();
+        } catch (InstantiationException e) {
+            e.printStackTrace();
         } catch (IllegalAccessException e) {
             e.printStackTrace();
-        } catch (InvocationTargetException e) {
-            e.printStackTrace();
         }
-        return "null";
-    }
-    private Object[] createListOFParameters(java.util.List<String> params){
-        ArrayList<Object> returnParam= new ArrayList<>();
-        for (int i = 0; i < params.size(); i++) {
-            returnParam.add(setValue(params.get(i),parameters[i].getParameterizedType().getTypeName()));
-        }
-        return returnParam.toArray();
-    }
-
-    public void updatePropertiesForClass(Class c){
         Field[] fieldsTable= c.getFields();
         System.out.println("JEST" +fieldsTable.length);
 
