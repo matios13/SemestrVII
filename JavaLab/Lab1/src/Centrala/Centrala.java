@@ -48,7 +48,7 @@ public class Centrala extends  UnicastRemoteObject implements ICentrala{
 
     }
         @Override
-    public boolean rejestruj(String nazwa, Object obj) throws RemoteException {
+    public boolean rejestruj(String nazwa, Object obj) {
         if(obj instanceof ISensor && !sensor.contains(new SensorStatus(nazwa,null))){
             sensor.add(new SensorStatus(nazwa, (ISensor) obj));
             loguj("Udalo sie dodac Sensor: " + sensor.size());
