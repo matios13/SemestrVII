@@ -60,7 +60,6 @@ public class MXBeanServer {
         registerMBean(mbs, straight, StraightPawn.class);
         if (System.getProperty("com.sun.management.jmxremote") == null) {
             System.out.println("JMX remote is disabled");
-            System.setProperty("com.sun.management.jmxremote", "9011");
         }
         String portString = System.getProperty("com.sun.management.jmxremote.port");
         if (portString != null) {

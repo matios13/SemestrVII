@@ -12,20 +12,20 @@ import java.util.Random;
 public class GameGrid extends JPanel {
 
     private int counter = 0;
-    private final int maxCounter = 2;
+    private final int maxCounter = 3;
     private List<Field> grid;
     private JavaScriptLoader javaScriptLoader;
     private int size;
 
     public GameGrid(int size) {
         this.size = size;
+        javaScriptLoader = new JavaScriptLoader();
         createGame();
     }
     private void createGame(){
         createRandomGrid(size);
         this.setLayout(new GridLayout(size, size, 1, 1));
         this.setVisible(true);
-        javaScriptLoader = new JavaScriptLoader();
         drawGrid();
     }
 
