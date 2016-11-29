@@ -16,9 +16,9 @@
         <items>
           <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="300.0" prefWidth="300.0">
                <children>
-                  <Pane prefHeight="300.0" prefWidth="300.0">
+                  <Pane prefHeight="300.0" prefWidth="450.0">
                      <children>
-                        <TableView fx:id="personTable" layoutY="14.0" prefHeight="270.0" prefWidth="448.0">
+                        <TableView fx:id="personTable" layoutY="14.0" prefHeight="240.0" prefWidth="450.0">
                           <columns>
                             <TableColumn fx:id="nameColumn" prefWidth="75.0" text="name" />
                               <TableColumn fx:id="numberColumn" prefWidth="75.0" text="number" />
@@ -29,6 +29,17 @@
                               
                           </columns>
                         </TableView>
+                         <TableView fx:id="personTableSum" layoutY="254.0" prefHeight="10" prefWidth="450.0">
+                             <columns>
+                                 <TableColumn fx:id="nameColumnSum" prefWidth="75.0" text="Total" />
+                                 <TableColumn fx:id="numberColumnSum" prefWidth="75.0" text="0" />
+                                 <TableColumn fx:id="avgTimeColumnSum" prefWidth="75.0" text="0" />
+                                 <TableColumn fx:id="shTimeColumnSum" prefWidth="75.0" text="0" />
+                                 <TableColumn fx:id="lgTimeColumnSum" prefWidth="75.0" text="0" />
+                                 <TableColumn fx:id="actionColumnSum" prefWidth="75.0" text="0" />
+
+                             </columns>
+                         </TableView>
                      </children>
                   </Pane>
                </children>

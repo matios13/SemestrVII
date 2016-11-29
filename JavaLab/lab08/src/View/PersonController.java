@@ -20,6 +20,9 @@ public class PersonController {
     private TableView<Person> personTable;
 
     @FXML
+    private TableView<Person> personTableSum;
+
+    @FXML
     private TableColumn<Person, String> numberColumn;
 
     @FXML
@@ -76,6 +79,8 @@ public class PersonController {
         lgTimeColumn.setCellValueFactory(c->c.getValue().lgTimeProperty().asString());
         avgTimeColumn.setCellValueFactory(c->c.getValue().avgTimeProperty().asString());
         numberColumn.setCellValueFactory(c->c.getValue().numbersProperty().asString());
+
+        personTableSum.setPlaceholder(new Label(""));
     }
 
     public void setPersons(Persons persons) {
