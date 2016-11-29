@@ -28,11 +28,6 @@ public class Main extends Application {
         showPersonOverview();
 
         primaryStage.show();
-        persons.getPersonData().get(0).addCall(new Call(10));
-        persons.getPersonData().get(0).addCall(new Call(15));
-        persons.getPersonData().get(0).addCall(new Call(7));
-        persons.getPersonData().get(0).addCall(new Call(20));
-        persons.getPersonData().get(0).addCall(new Call(4));
 
     }
 

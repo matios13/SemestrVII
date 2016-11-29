@@ -36,8 +36,6 @@
                                  <TableColumn fx:id="avgTimeColumnSum" prefWidth="75.0" text="0" />
                                  <TableColumn fx:id="shTimeColumnSum" prefWidth="75.0" text="0" />
                                  <TableColumn fx:id="lgTimeColumnSum" prefWidth="75.0" text="0" />
-                                 <TableColumn fx:id="actionColumnSum" prefWidth="75.0" text="0" />
-
                              </columns>
                          </TableView>
                      </children>

@@ -20,6 +20,8 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
+import java.util.function.Function;
+
 /**
  * Created by Uzytkownik on 29.11.2016.
  */
@@ -35,18 +37,18 @@ class AddCallCell extends TableCell<Person, Boolean> {
      * AddPersonCell constructor
      * @param table the table to which a new person can be added.
      */
-    AddCallCell(final TableView table, Persons persons) {
+    AddCallCell(final TableView table, Persons persons ,Runnable summaryRefresh) {
         this.persons = persons;
         paddedButton.setPadding(new Insets(3));
         paddedButton.getChildren().add(addButton);
         addButton.setOnAction(new EventHandler<ActionEvent>() {
             @Override public void handle(ActionEvent actionEvent) {
-                addCallPopup(getTableRow().getIndex());
+                addCallPopup(getTableRow().getIndex(),summaryRefresh);
             }
         });
     }
 
-    private void addCallPopup(int i){
+    private void addCallPopup(int i, Runnable summaryRefresh){
         final Stage dialog = new Stage();
         dialog.initModality(Modality.APPLICATION_MODAL);
         VBox dialogVbox = new VBox(20);
@@ -67,6 +69,7 @@ class AddCallCell extends TableCell<Person, Boolean> {
             @Override public void handle(ActionEvent actionEvent) {
                 persons.getPersonData().get(i).addCall(new Call(new Integer(nameField.getText())));
                 dialog.close();
+                summaryRefresh.run();
             }
         });
         Scene dialogScene = new Scene(dialogVbox, 200, 150);

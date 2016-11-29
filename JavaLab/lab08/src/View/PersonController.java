@@ -1,7 +1,6 @@
 package View;
 
 import Database.Persons;
-import Model.Call;
 import Model.Person;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.value.ObservableValue;
@@ -18,9 +17,6 @@ public class PersonController {
 
     @FXML
     private TableView<Person> personTable;
-
-    @FXML
-    private TableView<Person> personTableSum;
 
     @FXML
     private TableColumn<Person, String> numberColumn;
@@ -46,6 +42,25 @@ public class PersonController {
     @FXML
     private TextField userNameField;
 
+    //SUM table
+    @FXML
+    private TableView<Person> personTableSum;
+
+    @FXML
+    private TableColumn<Person, String> numberColumnSum;
+
+    @FXML
+    private TableColumn<Person, String> avgTimeColumnSum;
+
+    @FXML
+    private TableColumn<Person, String> lgTimeColumnSum;
+
+    @FXML
+    private TableColumn<Person, String> shTimeColumnSum;
+
+    @FXML
+    private TableColumn<Person, String> nameColumnSum;
+
 
     private Persons persons;
 
@@ -54,31 +69,36 @@ public class PersonController {
 
     @FXML
     private void initialize() {
+        PersonController pc =this;
         actionColumn.setSortable(false);
         actionColumn.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<Person, Boolean>, ObservableValue<Boolean>>() {
-            @Override public ObservableValue<Boolean> call(TableColumn.CellDataFeatures<Person, Boolean> features) {
+            @Override
+            public ObservableValue<Boolean> call(TableColumn.CellDataFeatures<Person, Boolean> features) {
                 return new SimpleBooleanProperty(features.getValue() != null);
             }
         });
         // create a cell value factory with an add button for each row in the table.
         actionColumn.setCellFactory(new Callback<TableColumn<Person, Boolean>, TableCell<Person, Boolean>>() {
-            @Override public TableCell<Person, Boolean> call(TableColumn<Person, Boolean> personBooleanTableColumn) {
-                return new AddCallCell(personTable,persons);
+            @Override
+            public TableCell<Person, Boolean> call(TableColumn<Person, Boolean> personBooleanTableColumn) {
+                return new AddCallCell(personTable, persons,pc::recalculateSummary);
             }
         });
-        addUserBtn.setOnAction(new EventHandler<ActionEvent>(){
-            @Override public void handle(ActionEvent actionEvent) {
+        addUserBtn.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
                 String name = userNameField.getText();
-                if(!name.isEmpty()){
+                if (!name.isEmpty()) {
                     persons.addPerson(new Person(name));
+                    recalculateSummary();
                 }
             }
         });
         nameColumn.setCellValueFactory(cellData -> cellData.getValue().nameProperty());
-        shTimeColumn.setCellValueFactory(cellData-> cellData.getValue().shTimeProperty().asString());
-        lgTimeColumn.setCellValueFactory(c->c.getValue().lgTimeProperty().asString());
-        avgTimeColumn.setCellValueFactory(c->c.getValue().avgTimeProperty().asString());
-        numberColumn.setCellValueFactory(c->c.getValue().numbersProperty().asString());
+        shTimeColumn.setCellValueFactory(cellData -> cellData.getValue().shTimeProperty().asString());
+        lgTimeColumn.setCellValueFactory(c -> c.getValue().lgTimeProperty().asString());
+        avgTimeColumn.setCellValueFactory(c -> c.getValue().avgTimeProperty().asString());
+        numberColumn.setCellValueFactory(c -> c.getValue().numbersProperty().asString());
 
         personTableSum.setPlaceholder(new Label(""));
     }
@@ -86,5 +106,12 @@ public class PersonController {
     public void setPersons(Persons persons) {
         this.persons = persons;
         personTable.setItems(persons.getPersonData());
+    }
+
+    public void recalculateSummary() {
+        numberColumnSum.setText("" + persons.sumOfPersons());
+        avgTimeColumnSum.setText("" + (int) persons.avgOfPersons());
+        lgTimeColumnSum.setText("" + persons.maxOfPersons());
+        shTimeColumnSum.setText("" + persons.minOfPersons());
     }
 }

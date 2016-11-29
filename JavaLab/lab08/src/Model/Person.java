@@ -107,4 +107,11 @@ public class Person {
         lgTime.set(calls.stream().max(Call::compareTo).get().getTime());
 
     }
+
+    public int maxCmpareTo(Person o) {
+        return Integer.compare(this.lgTime.get(),o.getLgTime());
+    }
+    public int minCmpareTo(Person o) {
+        return Integer.compare(this.shTime.get(),o.getShTime());
+    }
 }
