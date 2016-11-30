@@ -5,6 +5,9 @@ import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.beans.property.StringProperty;
 
+import javax.xml.bind.annotation.*;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapters;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -13,13 +16,36 @@ import java.util.stream.Collectors;
 /**
  * Created by pas113 on 2016-11-24.
  */
+
+@XmlRootElement(name="person")
+@XmlAccessorType(XmlAccessType.FIELD)
 public class Person {
+
+    @XmlAttribute
+    @XmlJavaTypeAdapter(value = StringPropertyAdapter.class, type = String.class)
     private StringProperty name;
+
+    @XmlAttribute
+    @XmlJavaTypeAdapter(value = IntegerPropertyAdapter.class, type = Integer.class)
     private IntegerProperty numbers;
+
+    @XmlAttribute
+    @XmlJavaTypeAdapter(value = IntegerPropertyAdapter.class, type = Integer.class)
     private IntegerProperty avgTime;
+
+    @XmlAttribute
+    @XmlJavaTypeAdapter(value = IntegerPropertyAdapter.class, type = Integer.class)
     private IntegerProperty shTime;
+
+    @XmlAttribute
+    @XmlJavaTypeAdapter(value = IntegerPropertyAdapter.class, type = Integer.class)
     private IntegerProperty lgTime;
+
+    @XmlElements(@XmlElement(name="call"))
     private List<Call> calls;
+
+    public Person() {
+    }
 
     public Person(String name) {
         this.name=new SimpleStringProperty(name);

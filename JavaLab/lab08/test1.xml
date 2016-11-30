@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<persons>
+    <person name="asd" numbers="2" avgTime="1" shTime="1" lgTime="2">
+        <call time="1"/>
+        <call time="2"/>
+    </person>
+    <person name="asd1" numbers="2" avgTime="16" shTime="1" lgTime="32">
+        <call time="1"/>
+        <call time="32"/>
+    </person>
+    <person name="asd2" numbers="2" avgTime="67" shTime="12" lgTime="123">
+        <call time="12"/>
+        <call time="123"/>
+    </person>
+</persons>

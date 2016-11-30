@@ -61,6 +61,14 @@ public class PersonController {
     @FXML
     private TableColumn<Person, String> nameColumnSum;
 
+    @FXML
+    private Button xmlButton;
+
+    @FXML
+    private Button xmlButtonLoad;
+
+    @FXML
+    private TextField xmlFileName;
 
     private Persons persons;
 
@@ -87,11 +95,19 @@ public class PersonController {
         addUserBtn.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent actionEvent) {
-                String name = userNameField.getText();
-                if (!name.isEmpty()) {
-                    persons.addPerson(new Person(name));
-                    recalculateSummary();
-                }
+                addUserOnClick();
+            }
+        });
+        xmlButton.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                persons.createXml(xmlFileName.getText());
+            }
+        });
+        xmlButtonLoad.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                persons.loadXml(xmlFileName.getText());
             }
         });
         nameColumn.setCellValueFactory(cellData -> cellData.getValue().nameProperty());
@@ -101,6 +117,14 @@ public class PersonController {
         numberColumn.setCellValueFactory(c -> c.getValue().numbersProperty().asString());
 
         personTableSum.setPlaceholder(new Label(""));
+    }
+
+    private void addUserOnClick() {
+        String name = userNameField.getText();
+        if (!name.isEmpty()) {
+            persons.addPerson(new Person(name));
+            recalculateSummary();
+        }
     }
 
     public void setPersons(Persons persons) {
